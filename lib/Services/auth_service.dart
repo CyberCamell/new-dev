@@ -4,8 +4,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
+  // Set this to true for development/testing without real API
+  static const bool _isDevelopmentMode = true;
+  
   static const String _baseUrl =
-      'https://conducted-technology-extends-header.trycloudflare.com';
+      'https://api.devguide.help';
   static const String _tokenKey = 'auth_token';
   static const String _isGuestKey = 'is_guest';
   static const String _resetTokenKey = 'reset_token';

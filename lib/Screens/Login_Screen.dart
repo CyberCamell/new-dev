@@ -30,6 +30,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
+    // Development mode - use mock login
+    if (kDebugMode) {
+      await _mockLogin();
+      return;
+    }
+
     final url = Uri.parse('${AuthService.baseUrl}/api/auth/login/');
 
     try {
@@ -82,6 +88,45 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
+    }
+  }
+
+  Future<void> _mockLogin() async {
+    // Simulate network delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    // Mock successful login
+    final mockUserData = {
+      'id': 1,
+      'email': _emailController.text.trim(),
+      'full_name': 'Demo User',
+      'profile_picture': null,
+    };
+
+    // Create mock tokens (these are just for testing)
+    final mockAccessToken = 'mock_access_token_${DateTime.now().millisecondsSinceEpoch}';
+    final mockRefreshToken = 'mock_refresh_token_${DateTime.now().millisecondsSinceEpoch}';
+
+    await AuthService.saveTokens(
+      accessToken: mockAccessToken,
+      refreshToken: mockRefreshToken,
+      userData: mockUserData,
+      rememberMe: _rememberMe,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Mock login successful! (Development mode)'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/tracks');
     }
   }
 

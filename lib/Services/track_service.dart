@@ -9,13 +9,21 @@ import '../models/term.dart';
 class TrackService {
   // Use the same base URL as AuthService. Avoid direct dependency if possible in larger apps (e.g., use config).
   static const String _baseUrl =
-      'https://conducted-technology-extends-header.trycloudflare.com';
+      'https://api.devguide.help';
+  
+  // Development mode flag
+  static const bool _isDevelopmentMode = kDebugMode;
 
   // Method to fetch all tracks
   static Future<List<Track>> getTracks({
     String? query,
     String? category,
   }) async {
+    // Return mock data in development mode
+    if (_isDevelopmentMode) {
+      return _getMockTracks();
+    }
+
     final url = Uri.parse('$_baseUrl/api/tracks/');
 
     try {
@@ -49,6 +57,52 @@ class TrackService {
       }
       return [];
     }
+  }
+
+  // Mock data for development
+  static List<Track> _getMockTracks() {
+    return [
+      Track(
+        id: 1,
+        name: 'Flutter Development',
+        description: 'Learn Flutter app development from basics to advanced',
+        category: 'Mobile Development',
+        duration: 120,
+        level: 'Beginner',
+        imageUrl: 'https://picsum.photos/300/200?random=1',
+        isFavorite: false,
+      ),
+      Track(
+        id: 2,
+        name: 'Dart Programming',
+        description: 'Master Dart programming language fundamentals',
+        category: 'Programming',
+        duration: 80,
+        level: 'Beginner',
+        imageUrl: 'https://picsum.photos/300/200?random=2',
+        isFavorite: true,
+      ),
+      Track(
+        id: 3,
+        name: 'UI/UX Design',
+        description: 'Create beautiful and intuitive user interfaces',
+        category: 'Design',
+        duration: 100,
+        level: 'Intermediate',
+        imageUrl: 'https://picsum.photos/300/200?random=3',
+        isFavorite: false,
+      ),
+      Track(
+        id: 4,
+        name: 'API Integration',
+        description: 'Learn to integrate REST APIs in your apps',
+        category: 'Backend',
+        duration: 60,
+        level: 'Intermediate',
+        imageUrl: 'https://picsum.photos/300/200?random=4',
+        isFavorite: false,
+      ),
+    ];
   }
 
   // Method to fetch favorite tracks

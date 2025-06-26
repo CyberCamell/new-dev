@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'codeblock.dart';
@@ -78,8 +79,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       _controller.clear();
     });
 
+    // Mock response in development mode
+    if (kDebugMode) {
+      await _sendMockMessage(message);
+      return;
+    }
+
     const String apiUrl =
-        'https://conducted-technology-extends-header.trycloudflare.com/api/chatbot/';
+        'https://api.devguide.help/api/chatbot/';
 
     try {
       final response = await http.post(
@@ -109,6 +116,28 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         });
       });
     }
+  }
+
+  Future<void> _sendMockMessage(String message) async {
+    // Simulate processing delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    String mockResponse;
+    
+    if (message.toLowerCase().contains('flutter')) {
+      mockResponse = 'Flutter is a UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase. It uses the Dart programming language and provides a rich set of widgets and tools.';
+    } else if (message.toLowerCase().contains('dart')) {
+      mockResponse = 'Dart is a programming language developed by Google. It\'s optimized for building user interfaces and is the language used by Flutter. Dart is strongly typed and supports both ahead-of-time and just-in-time compilation.';
+    } else if (message.toLowerCase().contains('hello') || message.toLowerCase().contains('hi')) {
+      mockResponse = 'Hello! I\'m DevBot, your development assistant. I can help you with Flutter, Dart, programming concepts, and more. How can I assist you today?';
+    } else {
+      mockResponse = 'Thanks for your question! I\'m currently running in demo mode. In the full version, I can provide detailed answers about development topics, code examples, and technical guidance.';
+    }
+
+    setState(() {
+      _messages.removeLast();
+      _messages.add({'role': 'bot', 'text': mockResponse, 'isLoading': false});
+    });
   }
 
   Widget buildMessage(Map<String, dynamic> msg) {
